@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alternative Energy Technologies Database</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Centaur', 'Garamond', 'Georgia', serif;
+            line-height: 1.6;
+            color: #2c3e50;
+            background: linear-gradient(135deg, #e3f2fd 0%, #b3e5fc 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+            overflow: hidden;
+        }
+
+        header {
+            background: linear-gradient(135deg, #ffd54f 0%, #ffeb3b 100%);
+            color: #2c3e50;
+            padding: 40px 30px;
+            text-align: center;
+            border-bottom: 4px solid #ffc107;
+        }
+
+        header h1 {
+            font-size: 3em;
+            margin-bottom: 10px;
+            font-weight: normal;
+            letter-spacing: 1px;
+        }
+
+        header p {
+            font-size: 1.3em;
+            opacity: 0.85;
+        }
+
+        .intro {
+            padding: 30px;
+            background: #fff9e6;
+            border-bottom: 2px solid #ffeb3b;
+        }
+
+        .intro h2 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-size: 1.8em;
+            font-weight: normal;
+        }
+
+        .intro p {
+            color: #555;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+
+        .last-updated {
+            font-style: italic;
+            color: #666;
+        }
+
+        .filters {
+            padding: 20px 30px;
+            background: #fff;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .search-box {
+            width: 100%;
+            padding: 12px 20px;
+            font-size: 18px;
+            font-family: 'Centaur', 'Garamond', 'Georgia', serif;
+            border: 2px solid #ffeb3b;
+            border-radius: 8px;
+            outline: none;
+            background: #fffef7;
+        }
+
+        .search-box:focus {
+            border-color: #ffc107;
+            background: white;
+        }
+
+        .tech-grid {
+            padding: 30px;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+        }
+
+        @media (max-width: 1400px) {
+            .tech-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        @media (max-width: 1024px) {
+            .tech-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 640px) {
+            .tech-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .tech-card {
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .tech-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(255, 235, 59, 0.3);
+            border-color: #ffeb3b;
+        }
+
+        .tech-card.expanded {
+            border-color: #ffc107;
+            box-shadow: 0 8px 20px rgba(255, 193, 7, 0.25);
+        }
+
+        .tech-header {
+            padding: 20px;
+            background: linear-gradient(135deg, #fff9e6 0%, #ffffff 100%);
+            border-bottom: 2px solid #ffeb3b;
+        }
+
+        .tech-header h3 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-size: 1.5em;
+            font-weight: normal;
+        }
+
+        .status {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: normal;
+        }
+
+        .status.research { 
+            background: #fff9c4; 
+            color: #f57f17; 
+            border: 1px solid #fbc02d;
+        }
+        .status.development { 
+            background: #b3e5fc; 
+            color: #01579b; 
+            border: 1px solid #0288d1;
+        }
+        .status.deployment { 
+            background: #c8e6c9; 
+            color: #1b5e20; 
+            border: 1px solid #4caf50;
+        }
+        .status.commercial { 
+            background: #e1bee7; 
+            color: #4a148c; 
+            border: 1px solid #9c27b0;
+        }
+
+        .tech-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease;
+            background: white;
+        }
+
+        .tech-content.show {
+            max-height: 3000px;
+        }
+
+        .tech-content-inner {
+            padding: 20px;
+        }
+
+        .tech-section {
+            margin-bottom: 15px;
+        }
+
+        .tech-section h4 {
+            color: #ffc107;
+            margin-bottom: 8px;
+            font-size: 1.1em;
+            font-weight: normal;
+            border-bottom: 1px solid #fff9e6;
+            padding-bottom: 5px;
+        }
+
+        .tech-section p, .tech-section ul {
+            color: #555;
+            font-size: 1em;
+            line-height: 1.8;
+        }
+
+        .tech-section ul {
+            margin-left: 20px;
+            margin-top: 5px;
+        }
+
+        .tech-section li {
+            margin-bottom: 8px;
+        }
+
+        .research-group {
+            margin-bottom: 10px;
+        }
+
+        .group-name {
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        .group-focus {
+            font-style: italic;
+            color: #666;
+            font-size: 0.95em;
+            margin-left: 10px;
+        }
+
+        .publications {
+            background: #f0f8ff;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            border: 1px solid #b3e5fc;
+        }
+
+        .publications h4 {
+            color: #01579b !important;
+            border-bottom: 1px solid #b3e5fc !important;
+        }
+
+        .pub-link {
+            display: block;
+            color: #0288d1;
+            text-decoration: none;
+            margin-bottom: 8px;
+            font-size: 0.95em;
+        }
+
+        .pub-link:hover {
+            text-decoration: underline;
+        }
+
+        .expand-indicator {
+            text-align: center;
+            padding: 10px;
+            color: #666;
+            font-size: 0.9em;
+            background: #fafafa;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .expand-indicator::after {
+            content: " ▼";
+        }
+
+        .tech-card.expanded .expand-indicator::after {
+            content: " ▲";
+        }
+
+        .comments-section {
+            background: #fff9e6;
+            padding: 40px 30px;
+            border-top: 3px solid #ffeb3b;
+        }
+
+        .comments-section h2 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-size: 2em;
+            text-align: center;
+            font-weight: normal;
+        }
+
+        .comments-section p {
+            text-align: center;
+            font-size: 1.2em;
+            color: #555;
+            margin-bottom: 20px;
+        }
+
+        .email-link {
+            display: block;
+            text-align: center;
+            font-size: 1.3em;
+            color: #ffc107;
+            text-decoration: none;
+            padding: 15px;
+            background: white;
+            border: 2px solid #ffeb3b;
+            border-radius: 8px;
+            max-width: 500px;
+            margin: 0 auto;
+            transition: all 0.3s ease;
+        }
+
+        .email-link:hover {
+            background: #fff9e6;
+            border-color: #ffc107;
+            transform: scale(1.02);
+        }
+
+        footer {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            text-align: center;
+            padding: 30px;
+        }
+
+        footer p {
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+
+        .credit {
+            font-size: 0.95em;
+            opacity: 0.8;
+            font-style: italic;
+            margin-top: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>⚡ Alternative Energy Technologies Database</h1>
+            <p>A curated collection of emerging energy technologies and research</p>
+        </header>
+
+        <div class="intro">
+            <h2>About This Database</h2>
+            <p>This database tracks cutting-edge energy technologies that could shape our energy future. Each entry includes technical details, research groups, current challenges, and recent publications.</p>
+            <p class="last-updated"><strong>Last Updated:</strong> January 2026</p>
+        </div>
+
+        <div class="filters">
+            <input type="text" class="search-box" id="searchBox" placeholder="Search technologies, materials, or research groups...">
+        </div>
+
+        <div class="tech-grid" id="techGrid">
+            <!-- Nuclear Isomer Triggering -->
+            <div class="tech-card" data-keywords="nuclear isomer triggering nit hafnium gamma ray energy storage">
+                <div class="tech-header">
+                    <h3>Nuclear Isomer Triggering (NIT)</h3>
+                    <span class="status research">Early Research</span>
+                </div>
+                <div class="expand-indicator">Click to expand</div>
+                <div class="tech-content">
+                    <div class="tech-content-inner">
+                        <div class="tech-section">
+                            <h4>How It Works</h4>
+                            <p>Nuclear isomers are excited states of atomic nuclei that can store energy for extended periods. When triggered to release this energy through specific gamma ray frequencies, they emit concentrated energy bursts.</p>
+                        </div>
+
+                        <div class="tech-section">
+                            <h4>Key Materials</h4>
+                            <ul>
+                                <li>Hafnium-178m2 (primary isomer candidate)</li>
+                                <li>Tantalum-180m</li>
+                                <li>Specialized gamma ray sources</li>
+                            </ul>
+                        </div>
+
+                        <div class="tech-section">
+                            <h4>Research Groups</h4>
+                            <div class="research-group">
+                                <span class="group-name">University of Texas at Dallas - AMO Physics Lab</span>
+                                <span class="group-focus">Investigating ultrafast isomerization processes</span>
+                            </div>
+                            <div class="research-group">
+                                <span class="group-name">Lawrence Livermore National Laboratory</span>
+                                <span class="group-focus">Studying energy release mechanisms and triggering reliability</span>
+                            </div>
+                        </div>
+
+                        <div class="tech-section">
+                            <h4>Current Problems</h4>
+                            <ul>
+                                <li>Extremely difficult to trigger reliably (controversial results)</li>
+                                <li>High costs for isomer production</li>
+                                <li>Energy input vs output efficiency unclear</li>
+                                <li>Scaling challenges from laboratory to practical application</li>
+                            </ul>
+                        </div>
+
+                        <div class="tech-section">
+                            <h4>Energy Output & Applications</h4>
+                            <p><strong>Theoretical:</strong> Very high energy density storage (~MJ/g)<br>
+                            <strong>Potential Uses:</strong> Energy storage, compact power sources, specialized applications</p>
+                        </div>
+
+                        <div class="tech-section">
+                            <h4>Benefits vs Other Tech</h4>
+                            <ul>
+                                <li>Extremely high energy density</li>
+                                <li>Long-term energy storage capability</li>
+                                <li>Clean energy release (no combustion)</li>
+                            </ul>
+                        </div>
+
+                        <div class="publications">
+                            <h4>Recent Publications</h4>
+                            <p class="pub-link">→ Google Scholar: "Nuclear isomer triggering" (filter 2023-2026)</p>
+                            <p class="pub-link">→ arXiv.org: Search "hafnium isomer" or "nuclear isomer energy"</p>
+                            <p style="font-size: 0.9em; color: #666; margin-top: 10px; font-style: italic;">Note: Publications in this area are sparse and controversial. Manual search recommended.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Molten Salt Reactors -->
+            <div class="tech-card" data-keywords="molten salt reactor msr thorium nuclear fluoride liquid fuel">
+                <div class="tech-header">
+                    <h3>Molten Salt Reactors (MSR)</h3>
+                    <span class="status development">Active Development</span>
+                </div>
+                <div class="expand-indicator">Click to expand</div>
+                <div class="tech-content">
+                    <div class="tech-content-inner">
+                        <div class="tech-section">
+                            <h4>How It Works</h4>
+                            <p>Nuclear fuel is dissolved in a molten fluoride salt that acts as both fuel and coolant. The liquid fuel circulates through the reactor core, enabling continuous operation and inherent safety features.</p>
+                        </div>
+
+                        <div class="tech-section">
+                            <h4>Key Materials</h4>
+                            <ul>
+                                <li>Fluoride salts (LiF-BeF2, FLiBe)</li>
+                                <li>Thorium-232 and/or Uranium-233</li>
+                                <li>Graphite moderator</li>
+                                <li>Hastelloy-N or similar corrosion-resistant alloys</li>
+                            </ul>
+                        </div>
+
+                        <div class="tech-section">
+                            <h4>Research Groups</h4>
+                            <div class="research-group">
+                                <span class="group-name">ThorCon Power</span>
+                                <span class="group-focus">Developing commercial pilot reactor in Indonesia</span>
+                            </div>
+                            <div class="research-group">
+                                <span class="group-name">Terrestrial Energy</span>
+                                <span class="group-focus">Creating modular IMSR design for near-term deployment</span>
+                            </div>
+                            <div class="research-group">
+                                <span class="group-name">Copenhagen Atomics</span>
+                                <span class="group-focus">Working on compact wasteburner design</span>
+                            </div>
+                            <div class="research-group">
+                                <span class="group-name">Chinese Academy of Sciences</span>
+                                <span class="group-focus">Operating experimental TMSR research program</span>
+                            </div>
+                        </div>
+
+                        <div class="tech-section">
+                            <h4>Current Problems</h4>
+                            <ul>
+                                <li>Materials corrosion from hot molten salts</li>
+                                <li>Regulatory approval challenges (no commercial precedent)</li>
+                                <li>High initial capital costs</li>
+                                <li>Salt chemistry management complexity</li>
+                            </ul>
+                        </div>
+
+                        <div class="tech-section">
+                            <h4>Energy Output & Applications</h4>
+                            <p><strong>Output:</strong> 50-500 MWe (depending on design)<br>
+                            <strong>Uses:</strong> Base-load electricity generation, industrial process heat, hydrogen production</p>
+                        </div>
+
+                        <div class="tech-section">
+                            <h4>Benefits vs Other Tech</h4>
+                            <ul>
+                                <li>Inherent safety (passive shutdown mechanisms)</li>
+                                <li>Can consume nuclear waste</li>
+                                <li>Higher thermal efficiency than solid-fuel reactors</li>
+                                <li>Reduced pressure requirements (atmospheric operation)</li>
+                            </ul>
+                        </div>
+
+                        <div class="publications">
+                            <h4>Recent Publications</h4>
+                            <p class="pub-link">→ Google Scholar: "molten salt reactor" (filter 2023-2026)</p>
+                            <p class="pub-link">→ DOE OSTI.gov: Government-funded MSR research</p>
+                            <p class="pub-link">→ Nuclear Engineering and Design journal</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- MOST -->
+            <div class="tech-card" data-keywords="most molecular solar thermal azobenzene photoisomerization energy storage">
+                <div class="tech-header">
+                    <h3>Molecular Solar-Thermal (MOST)</h3>
+                    <span class="status research">Research Phase</span>
+                </div>
+                <div class="expand-indicator">Click to expand</div>
+                <div class="tech-content">
+                    <div class="tech-content-inner">
+                        <div class="tech-section">
+                            <h4>How It Works</h4>
+                            <p>Uses photoswitchable molecules that absorb solar energy and change molecular structure, storing energy in chemical bonds. Heat or catalysts trigger the reverse reaction, releasing stored energy on demand.</p>
+                        </div>
+
+                        <div class="tech-section">
+                            <h4>Key Materials</h4>
+                            <ul>
+                                <li>Azobenzene derivatives</li>
+                                <li>Norbornadiene-quadricyclane systems</li>
+                                <li>Metal catalysts (for energy release)</li>
+                                <li>Transparent containers/solar collectors</li>
+                            </ul>
+                        </div>
+
+                        <div class="tech-section">
+                            <h4>Research Groups</h4>
+                            <div class="research-group">
+                                <span class="group-name">Chalmers University of Technology</span>
+                                <span class="group-focus">Leading research on improving energy density and cycle lifetime</span>
+                            </div>
+                            <div class="research-group">
+                                <span class="group-name">MIT Chemical Engineering</span>
+                                <span class="group-focus">Developing new molecular candidates with better properties</span>
+                            </div>
+                        </div>
+
+                        <div class="tech-section">
+                            <h4>Current Problems</h4>
+                            <ul>
+                                <li>Low energy storage density (~0.1 MJ/kg)</li>
+                                <li>Molecular degradation after repeated cycles</li>
+                                <li>Expensive specialized molecules</li>
+                                <li>Slow energy release rates</li>
+                                <li>Not yet viable at commercial scale</li>
+                            </ul>
+                        </div>
+
+                        <div class="tech-section">
+                            <h4>Energy Output & Applications</h4>
+                            <p><strong>Output:</strong> Low (designed for heat storage, not electricity)<br>
+                            <strong>Uses:</strong> Building heating, water heating, localized thermal applications</p>
+                        </div>
+
+                        <div class="tech-section">
+                            <h4>Benefits vs Other Tech</h4>
+                            <ul>
+                                <li>Long-term storage without energy loss</li>
+                                <li>No moving parts or batteries needed</li>
+                                <li>Can be stored and transported as liquid fuel</li>
+                                <li>Renewable and potentially recyclable</li>
+                            </ul>
+                        </div>
+
+                        <div class="publications">
+                            <h4>Recent Publications</h4>
+                            <p class="pub-link">→ Google Scholar: "molecular solar thermal" OR "MOST energy storage"</p>
+                            <p class="pub-link">→ Nature Energy and Advanced Energy Materials journals</p>
+                            <p style="font-size: 0.9em; color: #666; margin-top: 10px; font-style: italic;">Limited publications - emerging technology with few research groups</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+           
+            <div class="tech-card" data-keywords="most molecular solar thermal azobenzene photoisomerization energy storage">
+                <div class="tech-header">
+                    <h3>Anuetronic Fusion</h3>
+                    <span class="status research">Active Development</span>
+                </div>
+                <div class="expand-indicator">Click to expand</div>
+                <div class="tech-content">
+                    <div class="tech-content-inner">
+                        <div class="tech-section">
+                            <h4>How It Works</h4>
+                            <p>Anuetronic fusion is fusion where the output energies are exictied protons or Alpha particles instead of nuetrons. This is done by using a magnetic field to confine the plasma and then using a magnetic field to accelerate the protons or Alpha particles to high energies. The protons or Alpha particles then collide with each other, causing them to fuse and release energy. The energy is then collected and used to generate electricity.</p>
+                        </div>
+
+                        <div class="tech-section">
+                            <h4>Key Materials</h4>
+                            <ul>
+                                <li>Proton-boron-11</li>
+                                <li>Deuterium-helium-3</li>
+                            </ul>
+                        </div>
+
+                        <div class="tech-section">
+                            <h4>Research Groups</h4>
+                            <div class="research-group">
+                                <span class="group-name">TAE Technologies</span>
+                                <span class="group-focus">Long running company using field-reversed configuration (FRC) plasmas with hydrogen-boron 11 fuel.</span>
+                            </div>
+                            <div class="research-group">
+                                <span class="group-name">Princeton Fusion Systems</span>
+                                <span class="group-focus">Compact FRC devices using D-He3 fuel for mobile power and spaceraft propulsion.</span>
+                            </div>
+                            <div class="research-group">
+                                <span class="group-name">HB11 energy</span>
+                                <span class="group-focus">Laser-driven internal fusion with proton-boron-11 fuel. Empashizes anuetronic direct electric concepts</span>
+                            </div>
+                            <div class="research-group">
+                                <span class="group-name">Marvel Fusion</span>
+                                <span class="group-focus">High power laser-initiated fusion with proton-poron-11 in nanostructed targets. In partnership with Colorado State University</span>
+                            </div>
+                        </div>
+                        <div class="research-group">
+                            <span class="group-name"> Alpha Ring</span>
+                            <span class="group-focus">Microfusion company explicitly focused on a specialized, radiation free proton-boron reaction for distributed clean energy systems.</span>
+                        </div>
+
+                        <div class="tech-section">
+                            <h4>Current Problems</h4>
+                            <ul>
+                                <li>The Coulomb barrier is higher for heavier, more highly charged nuclei lke boron and heluim-3</li>
+                                <li>For proton-boron, the confinement parameter nTt is hundreds of times more demanding than for D-T</li>
+                                <li>Bremsstrahlung and related radiation losses grow at high tempatures, and can prevent net energy gain</li>
+                                <li>Unconventional confinement schemes (dense plasma focus, FRCs, and advanced laser concepts)</li>
+                                <li>Not yet viable at commercial scale</li>
+                            </ul>
+                        </div>
+
+                        <div class="tech-section">
+                            <h4>Energy Output & Applications</h4>
+                            <p><strong>Output:</strong> Proton-boron = 8.68 MeV (p+ Boron-11 =  3a +8.68 MeV) Deuterium-heluim-3 = 18.3 MeV (D+He= a + p +18.3MeV) Where a =alpha particles <br>
+                            <strong>Uses:</strong> Fusion without the harful nuetrons radiation for less material damage and overall waste. </p>
+                        </div>
+
+                        <div class="tech-section">
+                            <h4>Benefits vs Other Tech</h4>
+                            <ul>
+                                <li>Greatly reduces nuetron radiation </li>
+                                <li>Instead of a steam cycle, in priciple, direct electric conversion can be used (electrostatic or inductive). This can improve efficiency and plant complexity </li>
+                                
+                            </ul>
+                        </div>
+
+                        <div class="publications">
+                            <h4>Recent Publications</h4>
+                            <p class="pub-link">→ Ochs & Fisch, “Improving the feasibility of economical proton‑boron‑11 fusion via alpha channeling,” Phys. Rev. E 106, 055215 (2022): analyzes how wave‑based alpha channeling can redirect fusion power and reduce required confinement times for p–B¹¹ ignition. </p>
+            
+                            <p style="font-size: 0.9em; color: #666; margin-top: 10px; font-style: italic;">Limited publications - emerging technology with few research groups</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Add more technologies here following the same structure -->
+        </div>
+
+        <div class="comments-section">
+            <h2>Comments / Questions / Concerns / Suggestions</h2>
+            <p>Have feedback about this database or want to suggest an energy technology to add?</p>
+            <a href="mailto:mjpsm2017@gmail.com?subject=Energy Database Feedback" class="email-link">
+                📧 Contact Me
+            </a>
+        </div>
+
+        <footer>
+            <p>Alternative Energy Technologies Database</p>
+            <p>Tracking the future of energy production and storage</p>
+            <p class="credit">Curated and maintained by Paige Maruschak</p>
+            <p style="font-size: 0.85em; opacity: 0.7; margin-top: 10px;">Last updated: January 2026</p>
+        </footer>
+    </div>
+
+    <script>
+        // Search functionality
+        const searchBox = document.getElementById('searchBox');
+        const techCards = document.querySelectorAll('.tech-card');
+
+        searchBox.addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase();
+            
+            techCards.forEach(card => {
+                const keywords = card.getAttribute('data-keywords');
+                const cardText = card.textContent.toLowerCase();
+                
+                if (keywords.includes(searchTerm) || cardText.includes(searchTerm)) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        });
+
+        // Expand/collapse functionality
+        // Expand/collapse functionality
+techCards.forEach(card => {
+    const header = card.querySelector('.tech-header');
+    const indicator = card.querySelector('.expand-indicator');
+    
+    // Function to toggle the card
+    function toggleCard() {
+        const content = card.querySelector('.tech-content');
+        const isExpanded = card.classList.contains('expanded');
+        
+        if (isExpanded) {
+            card.classList.remove('expanded');
+            content.classList.remove('show');
+        } else {
+            card.classList.add('expanded');
+            content.classList.add('show');
+        }
+    }
+    
+    // Click on header to expand/collapse
+    header.addEventListener('click', toggleCard);
+    
+    // Click on indicator to expand/collapse
+    indicator.addEventListener('click', toggleCard);
+});
+            
+    </script>
+</body>
+</html>
